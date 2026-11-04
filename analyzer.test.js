@@ -32,3 +32,25 @@ test('detects a burst spanning two clock minutes', () => {
   const report = analyze(lines.join('\n'));
   assert.equal(report.alerts.filter(a => a.ruleId === 'error_burst').length, 1);
 });
+
+test('isolates duplicate IDs and keeps traceable evidence without trusting labels', () => {
+  const base = { event_time: '2026-11-04T10:00:00+08:00', service: 'web', route: '/login', status: 401, session_id: 's1', source_label: 'normal' };
+  const lines = Array.from({ length: 5 }, (_, i) => JSON.stringify({ ...base, event_id: `evt-${i}`, event_time: `2026-11-04T10:00:0${i}+08:00` }));
+  lines.push(lines[0]);
+  const report = analyze(lines.join('\n'));
+  assert.equal(report.summary.total, 5);
+  assert.equal(report.rejected[0].reason, '重复 event_id');
+  const alert = report.alerts.find(a => a.ruleId === 'login_failure');
+  assert.deepEqual(alert.eventIds, ['evt-0', 'evt-1', 'evt-2', 'evt-3', 'evt-4']);
+  assert.equal(alert.ruleVersion, report.ruleVersion);
+  assert.equal(alert.disposition, 'NEW');
+});
+
+test('accepts v2 request_id and UTC time while retaining legacy import', () => {
+  const legacy = '203.0.113.10 - - [04/Nov/2026:10:05:00 +0800] "GET /home HTTP/1.1" 200 10';
+  const v2 = JSON.stringify({ request_id: 'req-1', event_time: '2026-11-04T02:05:00Z', service: 'web', route: '/home', status: 200 });
+  const report = analyze(`${legacy}\n${v2}`);
+  assert.equal(report.summary.total, 2);
+  assert.equal(report.events[0].time, report.events[1].time);
+  assert.equal(report.events[1].eventId, 'req-1');
+});
