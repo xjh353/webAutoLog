@@ -8,6 +8,7 @@ const ROOT = __dirname;
 const DATA = path.join(ROOT, 'data');
 const MAX_BODY = 10 * 1024 * 1024;
 const MIME = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.svg': 'image/svg+xml' };
+const NEXT = { NEW: ['TRIAGED'], TRIAGED: ['CONFIRMED', 'DISMISSED'], CONFIRMED: ['CLOSED'], DISMISSED: ['CLOSED'], CLOSED: [] };
 
 function json(res, status, value) {
   res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' });
@@ -69,6 +70,27 @@ const server = http.createServer(async (req, res) => {
     if (detail && req.method === 'GET') {
       const file = path.join(DATA, `${detail[1]}.json`);
       return fs.existsSync(file) ? json(res, 200, JSON.parse(fs.readFileSync(file))) : json(res, 404, { error: '记录不存在' });
+    }
+    const review = url.pathname.match(/^\/api\/history\/([a-f0-9-]{36})\/alerts\/([a-f0-9-]{36})\/review$/);
+    if (review && req.method === 'POST') {
+      const body = await readBody(req);
+      const file = path.join(DATA, `${review[1]}.json`);
+      if (!fs.existsSync(file)) return json(res, 404, { error: '报告不存在' });
+      const report = JSON.parse(fs.readFileSync(file));
+      const alert = report.alerts.find(a => a.id === review[2]);
+      if (!alert) return json(res, 404, { error: '告警不存在' });
+      const to = body?.status;
+      const actor = String(body?.actor || '').trim();
+      const reason = String(body?.reason || '').trim();
+      if (!NEXT[alert.disposition || 'NEW']?.includes(to) || !actor || !reason || actor.length > 80 || reason.length > 500) {
+        return json(res, 400, { error: '状态转换无效，或缺少操作人和理由' });
+      }
+      const from = alert.disposition || 'NEW';
+      alert.disposition = to;
+      alert.reviews ||= [];
+      alert.reviews.push({ from, to, actor, reason, at: new Date().toISOString() });
+      fs.writeFileSync(file, JSON.stringify(report));
+      return json(res, 200, report);
     }
     if (url.pathname === '/api/analyze' && req.method === 'POST') {
       const body = await readBody(req);

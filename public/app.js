@@ -107,11 +107,35 @@ function renderAlerts() {
   for (const alert of rows.slice(0, visibleAlerts)) {
     const tr = el('tr'); const level = el('td'); level.append(el('span', `severity ${alert.severity}`, alert.severity === 'high' ? '高危' : '中危'));
     const rule = el('td'); rule.append(el('span', 'rule-name', alert.rule), el('span', 'evidence', alert.evidence), el('span', 'advice', alert.advice));
-    tr.append(level, rule, el('td', '', alert.ip), el('td', '', formatTime(alert.time)), el('td', '', String(alert.status))); body.append(tr);
+    if (alert.eventIds?.length) rule.append(el('span', 'trace', `证据 ${alert.eventIds.length} 条 · ${alert.eventIds.slice(0, 5).join(', ')}${alert.eventIds.length > 5 ? '…' : ''} · ${alert.ruleVersion || '旧版'}`));
+    const review = el('td');
+    review.append(el('span', 'trace', alert.disposition || 'NEW'));
+    const actions = { NEW: [['TRIAGED', '分诊']], TRIAGED: [['CONFIRMED', '确认'], ['DISMISSED', '排除']], CONFIRMED: [['CLOSED', '关闭']], DISMISSED: [['CLOSED', '关闭']] };
+    for (const [status, label] of actions[alert.disposition || 'NEW'] || []) {
+      const button = el('button', 'review-btn', label);
+      button.addEventListener('click', () => reviewAlert(alert, status));
+      review.append(button);
+    }
+    tr.append(level, rule, el('td', '', alert.ip), el('td', '', formatTime(alert.time)), el('td', '', String(alert.status)), review); body.append(tr);
   }
   $('alerts-empty').hidden = rows.length > 0;
   $('more-alerts').hidden = rows.length <= visibleAlerts;
   $('more-alerts').textContent = `已显示 ${Math.min(visibleAlerts, rows.length)} / ${rows.length} 条 · 显示更多`;
+}
+
+async function reviewAlert(alert, status) {
+  const actor = prompt('操作人（用于审计记录）：');
+  if (!actor?.trim()) return;
+  const reason = prompt('处置理由：');
+  if (!reason?.trim()) return;
+  try {
+    report = await api(`/api/history/${report.id}/alerts/${alert.id}/review`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status, actor: actor.trim(), reason: reason.trim() }),
+    });
+    message('处置已记录。');
+    renderAlerts();
+  } catch (error) { message(error.message, true); }
 }
 
 async function loadHistory() {
@@ -145,13 +169,13 @@ function download(format) {
   let content, type;
   if (format === 'json') { content = JSON.stringify(report, null, 2); type = 'application/json'; }
   else {
-    const columns = ['severity', 'rule', 'time', 'ip', 'method', 'path', 'status', 'count', 'evidence', 'advice'];
+    const columns = ['severity', 'rule', 'ruleVersion', 'time', 'ip', 'method', 'path', 'status', 'count', 'eventIds', 'disposition', 'evidence', 'advice'];
     const csvCell = value => {
       const text = String(value ?? '');
       const safe = /^[\s\u0000-\u001f]*[=+@-]/.test(text) ? `'${text}` : text;
       return `"${safe.replaceAll('"', '""')}"`;
     };
-    content = '\ufeff' + [columns.join(','), ...report.alerts.map(a => columns.map(c => csvCell(a[c])).join(','))].join('\r\n');
+    content = '\ufeff' + [columns.join(','), ...report.alerts.map(a => columns.map(c => csvCell(Array.isArray(a[c]) ? a[c].join(' ') : a[c])).join(','))].join('\r\n');
     type = 'text/csv';
   }
   const blob = new Blob([content], { type: `${type};charset=utf-8` });
