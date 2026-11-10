@@ -1,0 +1,7 @@
+{
+  "source": "教学合成情境中的外部批准记录",
+  "groups": [
+    { "service": "teaching", "sessionId": "dev-load" },
+    { "service": "teaching", "sessionId": "test-load" }
+  ]
+}

@@ -1,0 +1,8 @@
+const MAX_LINES = 100000;
+const RULE_VERSIONS = { baseline: 'P2-R1', 'approved-load': 'P2-R2' };
+const ALERT_TRANSITIONS = {
+  NEW: ['TRIAGED'], TRIAGED: ['CONFIRMED', 'DISMISSED'],
+  CONFIRMED: ['CLOSED'], DISMISSED: ['CLOSED'], CLOSED: [],
+};
+
+module.exports = { MAX_LINES, RULE_VERSIONS, ALERT_TRANSITIONS };

@@ -4,9 +4,10 @@
   "private": true,
   "description": "Web 日志异常检测与审计工作台",
   "scripts": {
-    "start": "node server.js",
-    "test": "node --test",
-    "eval": "node eval.js"
+    "start": "node src/server/server.js",
+    "test": "node --test tests/*.test.js",
+    "eval": "node scripts/eval.js",
+    "experiment": "node scripts/eval.js --save"
   },
   "engines": { "node": ">=18" }
 }

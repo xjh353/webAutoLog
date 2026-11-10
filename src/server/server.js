@@ -1,14 +1,14 @@
 const http = require('node:http');
 const fs = require('node:fs');
 const path = require('node:path');
-const { analyze } = require('./analyzer');
+const { analyze } = require('../analysis/analyzer');
+const { ALERT_TRANSITIONS } = require('../core/constants');
 
 const PORT = Number(process.env.PORT) || 3000;
-const ROOT = __dirname;
+const ROOT = path.join(__dirname, '..', '..');
 const DATA = path.join(ROOT, 'data');
 const MAX_BODY = 10 * 1024 * 1024;
 const MIME = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.svg': 'image/svg+xml' };
-const NEXT = { NEW: ['TRIAGED'], TRIAGED: ['CONFIRMED', 'DISMISSED'], CONFIRMED: ['CLOSED'], DISMISSED: ['CLOSED'], CLOSED: [] };
 
 function json(res, status, value) {
   res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' });
@@ -82,7 +82,7 @@ const server = http.createServer(async (req, res) => {
       const to = body?.status;
       const actor = String(body?.actor || '').trim();
       const reason = String(body?.reason || '').trim();
-      if (!NEXT[alert.disposition || 'NEW']?.includes(to) || !actor || !reason || actor.length > 80 || reason.length > 500) {
+      if (!ALERT_TRANSITIONS[alert.disposition || 'NEW']?.includes(to) || !actor || !reason || actor.length > 80 || reason.length > 500) {
         return json(res, 400, { error: '状态转换无效，或缺少操作人和理由' });
       }
       const from = alert.disposition || 'NEW';
@@ -108,7 +108,10 @@ const server = http.createServer(async (req, res) => {
     res.writeHead(200, { 'Content-Type': MIME[path.extname(fullPath)], 'X-Content-Type-Options': 'nosniff' });
     fs.createReadStream(fullPath).pipe(res);
   } catch (error) {
-    if (!res.headersSent && !res.destroyed) json(res, /超过|未识别|无效/.test(error.message) ? 400 : 500, { error: error.message });
+    const invalidInput = /超过|未识别|无效/.test(error.message);
+    if (!invalidInput) console.error('请求处理失败:', error);
+    if (!res.headersSent && !res.destroyed) json(res, invalidInput ? 400 : 500,
+      { error: invalidInput ? error.message : '本地服务处理失败，请检查服务端日志' });
   }
 });
 

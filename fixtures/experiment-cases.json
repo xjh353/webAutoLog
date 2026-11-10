@@ -1,0 +1,10 @@
+[
+  { "id": "dev-normal", "split": "development", "label": "normal", "count": 4, "route": "/home", "status": 200 },
+  { "id": "dev-login", "split": "development", "label": "anomaly", "count": 5, "route": "/login", "status": 401 },
+  { "id": "dev-scan", "split": "development", "label": "anomaly", "count": 8, "route": "/missing", "status": 404, "varyRoute": true },
+  { "id": "dev-load", "split": "development", "label": "normal", "count": 30, "route": "/health", "status": 200 },
+  { "id": "test-normal", "split": "test", "label": "normal", "count": 4, "route": "/catalog", "status": 200 },
+  { "id": "test-login", "split": "test", "label": "anomaly", "count": 5, "route": "/signin", "status": 403 },
+  { "id": "test-scan", "split": "test", "label": "anomaly", "count": 8, "route": "/unknown", "status": 404, "varyRoute": true },
+  { "id": "test-load", "split": "test", "label": "normal", "count": 30, "route": "/api/items", "status": 200 }
+]
