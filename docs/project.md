@@ -4,11 +4,13 @@
 
 ## 输入契约
 
-推荐 JSONL 字段：`event_id`、`event_time`、`service`、`route`、`status`、`latency_ms`、`session_id`、`actor_hint`、`source_label`。支持 `request_id` 作为事件 ID，支持旧版 Common/Combined 日志。时间统一规范化为 UTC。旧日志没有事件 ID 时，以数据集哈希和行号生成稳定 ID；缺失会话时按来源 IP 分组，并在告警中标明分组方式。`actor_hint` 缺失时不推断身份。`source_label` 仅供评价脚本读取，检测规则不使用它。
+推荐 JSONL 字段：`event_id`、`event_time`、`service`、`route`、`status`、`latency_ms`、`session_id`、`actor_hint`、`source_label`。支持 `request_id` 作为事件 ID，支持旧版 Common/Combined 日志。时间统一规范化为 UTC。旧日志没有事件 ID 时，以数据集哈希和行号生成稳定 ID；缺失会话时按来源 IP 分组，并在告警中标明分组方式。来源地址只读取日志的 `remote_addr`、`client_ip` 或 `ip` 字段；单独出现的 `http_x_forwarded_for` 不作为可信来源地址，事件的 `sourceField` 会标明取值来源。`actor_hint` 缺失时不推断身份。`source_label` 仅供评价脚本读取，检测规则不使用它。
 
-无效时间、坏行和重复事件 ID 会进入报告的 `rejected` 列表，记录行号、原因和原始文本。有效记录保留 `eventId`、规范化字段和原始行，告警中的 `eventIds` 可回溯到这些记录。原始文本是非可信数据，前端使用 `textContent` 显示，不执行其中的命令或 HTML。
+无效时间、坏行和重复事件 ID 会进入报告的 `rejected` 列表，记录行号、原因和原始文本。既无会话又无可信来源地址的有效请求仍保留并参加单条请求检测，但不会进入窗口聚合。有效记录保留 `eventId`、规范化字段和原始行，告警中的 `eventIds` 可回溯到这些记录。原始文本是非可信数据，前端使用 `textContent` 显示，不执行其中的命令或 HTML。
 
 ## 规则契约
+
+网页默认运行 P2-R1。实验候选 P2-R2 只对外部批准清单中服务与会话 ID 同时匹配的记录抑制高频请求告警；其他规则和阈值保持一致。两版规则及实验口径见 [规则卡](rules.md) 和 [工程实验](experiment.md)。
 
 当前规则版本为 `P2-R1`。单条请求规则识别 SQL 注入、XSS、路径穿越、敏感路径和扫描器特征。聚合规则使用事件时间与滚动窗口 `(t-60 秒, t]`，按 `service + session_id` 分组；没有会话时按来源 IP 分组。60 秒内登录失败达到 5 次、4xx 达到 8 次、5xx 达到 5 次或总请求达到 30 次时生成候选告警。同组同规则每分钟最多产生一条告警。阈值是教学演示值，尚未按真实业务基线校准。
 
