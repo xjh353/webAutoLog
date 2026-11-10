@@ -93,6 +93,13 @@ function renderReport() {
     ['▤', `${summary.invalidCount} 行未解析`, summary.invalidCount ? `行号：${report.invalidLines.join('、')}${summary.invalidCount > 20 ? '…' : ''}` : '全部非空日志行均已成功解析。'],
   ];
   for (const [icon, title, desc] of findingData) { const row = el('div', 'finding'); const box = el('div', 'finding-icon', icon); const body = el('div'); body.append(el('strong', '', title), el('p', '', desc)); row.append(box, body); findings.append(row); }
+  if (report.rejected?.length) {
+    const details = el('details', 'evidence-details');
+    details.append(el('summary', '', `查看隔离记录（共 ${report.rejected.length} 行，展示前 20 行）`));
+    const sample = report.rejected.slice(0, 20).map(item => `第 ${item.line} 行 · ${item.reason}\n${item.raw}`);
+    details.append(el('pre', '', sample.join('\n\n')));
+    findings.append(details);
+  }
   if (summary.invalidCount) message(`有 ${summary.invalidCount} 行无法解析，已跳过。`);
   else message('');
   renderAlerts();
@@ -101,6 +108,7 @@ function renderReport() {
 
 function renderAlerts() {
   const body = $('alerts-body'); body.replaceChildren();
+  const eventById = new Map((report?.events || []).map(event => [event.eventId, event]));
   const severity = $('severity-filter').value;
   const query = $('alert-search').value.trim().toLowerCase();
   const rows = (report?.alerts || []).filter(a => (severity === 'all' || a.severity === severity) && (!query || [a.ip, a.rule, a.path, a.evidence].join(' ').toLowerCase().includes(query)));
@@ -108,6 +116,20 @@ function renderAlerts() {
     const tr = el('tr'); const level = el('td'); level.append(el('span', `severity ${alert.severity}`, alert.severity === 'high' ? '高危' : '中危'));
     const rule = el('td'); rule.append(el('span', 'rule-name', alert.rule), el('span', 'evidence', alert.evidence), el('span', 'advice', alert.advice));
     if (alert.eventIds?.length) rule.append(el('span', 'trace', `证据 ${alert.eventIds.length} 条 · ${alert.eventIds.slice(0, 5).join(', ')}${alert.eventIds.length > 5 ? '…' : ''} · ${alert.ruleVersion || '旧版'}`));
+    if (alert.eventIds?.length) {
+      const details = el('details', 'evidence-details');
+      details.append(el('summary', '', `查看原始证据（${alert.eventIds.length} 条）`));
+      details.addEventListener('toggle', () => {
+        if (!details.open || details.dataset.loaded) return;
+        const lines = alert.eventIds.map(id => {
+          const event = eventById.get(id);
+          return event ? `第 ${event.line} 行 · ${id}\n${event.raw}` : `${id} · 原始记录缺失`;
+        });
+        details.append(el('pre', '', lines.join('\n\n')));
+        details.dataset.loaded = 'true';
+      });
+      rule.append(details);
+    }
     const review = el('td');
     review.append(el('span', 'trace', alert.disposition || 'NEW'));
     const actions = { NEW: [['TRIAGED', '分诊']], TRIAGED: [['CONFIRMED', '确认'], ['DISMISSED', '排除']], CONFIRMED: [['CLOSED', '关闭']], DISMISSED: [['CLOSED', '关闭']] };
@@ -115,6 +137,13 @@ function renderAlerts() {
       const button = el('button', 'review-btn', label);
       button.addEventListener('click', () => reviewAlert(alert, status));
       review.append(button);
+    }
+    if (alert.reviews?.length) {
+      const history = el('details', 'evidence-details');
+      history.append(el('summary', '', `处置记录（${alert.reviews.length}）`));
+      history.append(el('pre', '', alert.reviews.map(item =>
+        `${formatTime(item.at)} · ${item.actor}\n${item.from} → ${item.to}\n理由：${item.reason}`).join('\n\n')));
+      review.append(history);
     }
     tr.append(level, rule, el('td', '', alert.ip), el('td', '', formatTime(alert.time)), el('td', '', String(alert.status)), review); body.append(tr);
   }
