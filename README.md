@@ -100,6 +100,6 @@ docs/             契约、评价、交付和结对复核材料
 data/             运行时生成的本地报告（不纳入 Git）
 ```
 
-课程要求与具体口径见 [项目设计](docs/project.md) 和 [课件对照](docs/课程要求对照.md)；规则阈值见 [规则卡](docs/rules.md)；接口与报告字段见 [API 说明](docs/api.md)；双版本实测和成本边界见 [工程实验](docs/experiment.md) 与 [评价记录](docs/evaluation.md)；部署恢复见 [交付说明](docs/release.md)；结对互评可使用 [复核模板](docs/peer-review.md)。
+目录职责与关键文件见 [项目结构设计与文件职责讲解](docs/项目结构设计与文件职责讲解.md)。课程要求与具体口径见 [项目设计](docs/project.md) 和 [课件对照](docs/课程要求对照.md)；规则阈值见 [规则卡](docs/rules.md)；接口与报告字段见 [API 说明](docs/api.md)；双版本实测和成本边界见 [工程实验](docs/experiment.md) 与 [评价记录](docs/evaluation.md)；部署恢复见 [交付说明](docs/release.md)；结对互评可使用 [复核模板](docs/peer-review.md)。
 
 报告仅保存在本机 `data/`，程序不向外部服务发送日志。真实日志和导出文件可能含敏感路径或会话标识，分享前应按团队要求处理。
