@@ -103,3 +103,5 @@ data/             运行时生成的本地报告（不纳入 Git）
 第一次演示可按 [启动与演示指南](docs/启动与演示指南.md) 操作；目录职责与关键文件见 [项目结构设计与文件职责讲解](docs/项目结构设计与文件职责讲解.md)。课程要求与具体口径见 [项目设计](docs/project.md) 和 [课件对照](docs/课程要求对照.md)；规则阈值见 [规则卡](docs/rules.md)；接口与报告字段见 [API 说明](docs/api.md)；双版本实测和成本边界见 [工程实验](docs/experiment.md) 与 [评价记录](docs/evaluation.md)；部署恢复见 [交付说明](docs/release.md)；结对互评可使用 [复核模板](docs/peer-review.md)。
 
 报告仅保存在本机 `data/`，程序不向外部服务发送日志。真实日志和导出文件可能含敏感路径或会话标识，分享前应按团队要求处理。
+
+项目级目标、阶段安排与可核对任务分别见 [Global](docs/Global.md)、[Plan](docs/Plan.md)、[Tasks](docs/Tasks.md)；开发及 AI 操作约定见 [项目级 Harness](AGENTS.md)。架构和实验候选的取舍记录见 [ADR-0001](docs/adr/0001-offline-audit-architecture.md)、[ADR-0002](docs/adr/0002-approved-load-experiment.md)。这些记录区分已完成的本机验证与仍需伙伴或真实业务参与的工作。
