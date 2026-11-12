@@ -1,0 +1,303 @@
+{
+  "status": "executed",
+  "createdAt": "2026-11-12T11:51:07.201Z",
+  "input": {
+    "source": "fixtures/experiment-cases.json",
+    "sha256": "4e48dbecaf992777060c078a22cdab85349bcd3c6f6129032c1f98765ecf26d0",
+    "datasetId": "4e48dbecaf992777",
+    "sessions": 8,
+    "rows": 94,
+    "splitUnit": "complete session",
+    "approvedContextSource": "fixtures/approved-load.json",
+    "approvedContextSha256": "8997c90e454fd55906e318055dcaeb73f9a2ddb3a0b718e6f92476f6538c7221"
+  },
+  "plan": {
+    "source": "fixtures/experiment-plan.json",
+    "sha256": "dc3b9292b2d5a6aa4ee2bad500f1ba9eddd20ca5208cebe53fb52075efeb420f",
+    "question": "在固定的合成会话中，外部批准清单能否减少高频请求的误报，同时保留目标异常检出？",
+    "baseline": "P2-R1：所有达到 60 秒 30 次请求的会话产生候选告警",
+    "candidate": "P2-R2：只对外部清单标记的已批准压测会话抑制高频规则；其他规则不变",
+    "fixed": [
+      "同一批合成会话",
+      "相同解析器、60 秒窗口和其他阈值",
+      "按完整会话统计",
+      "相同运行入口和计时边界"
+    ],
+    "primaryMetric": "测试分区的正常会话中，产生候选告警的会话数（FP）",
+    "qualityGate": "测试分区的目标异常会话均需产生候选告警，且告警 event_id 能回查原始事件",
+    "repetitions": 3,
+    "timingBoundary": "仅 analyze() 的同步处理时间；不含生成输入、读写结果或人工复核",
+    "decisionRule": "质量门槛通过且测试分区 FP 减少，才将候选列为值得继续验证；不凭这份小样本直接部署"
+  },
+  "environment": {
+    "node": "v22.22.2",
+    "platform": "win32",
+    "arch": "x64"
+  },
+  "sourceHashes": {
+    "src/analysis/analyzer.js": "e3edd178a9c4eeace8fc94f1c5e62196e2fabdd5f95b6eac75638322eb5676b9",
+    "src/analysis/parser.js": "a3516d9fccd0a5bad443f0fbd088e0fd83233bc7c44f993bfd4df493b0e23f44",
+    "scripts/eval.js": "6ecfec11aab29572a71432a56f0e7f4fa4574bac2f428fa9ca9d1f95a4379175",
+    "fixtures/experiment-cases.json": "8c7a13711f9375932bfc8c25dbb7c301ccf01f0308e0e2bd3c44411f7d52a0c1",
+    "fixtures/approved-load.json": "8997c90e454fd55906e318055dcaeb73f9a2ddb3a0b718e6f92476f6538c7221"
+  },
+  "runs": [
+    {
+      "round": 1,
+      "strategy": "baseline",
+      "status": "completed",
+      "elapsedMs": 13.4951,
+      "datasetId": "4e48dbecaf992777",
+      "ruleVersion": "P2-R1",
+      "validRows": 94,
+      "rejectedRows": 0,
+      "alertCount": 6,
+      "suppressedCount": 0
+    },
+    {
+      "round": 1,
+      "strategy": "approved-load",
+      "status": "completed",
+      "elapsedMs": 0.9123000000000019,
+      "datasetId": "4e48dbecaf992777",
+      "ruleVersion": "P2-R2",
+      "validRows": 94,
+      "rejectedRows": 0,
+      "alertCount": 4,
+      "suppressedCount": 2
+    },
+    {
+      "round": 2,
+      "strategy": "baseline",
+      "status": "completed",
+      "elapsedMs": 1.158999999999999,
+      "datasetId": "4e48dbecaf992777",
+      "ruleVersion": "P2-R1",
+      "validRows": 94,
+      "rejectedRows": 0,
+      "alertCount": 6,
+      "suppressedCount": 0
+    },
+    {
+      "round": 2,
+      "strategy": "approved-load",
+      "status": "completed",
+      "elapsedMs": 0.6807000000000016,
+      "datasetId": "4e48dbecaf992777",
+      "ruleVersion": "P2-R2",
+      "validRows": 94,
+      "rejectedRows": 0,
+      "alertCount": 4,
+      "suppressedCount": 2
+    },
+    {
+      "round": 3,
+      "strategy": "baseline",
+      "status": "completed",
+      "elapsedMs": 0.6583000000000112,
+      "datasetId": "4e48dbecaf992777",
+      "ruleVersion": "P2-R1",
+      "validRows": 94,
+      "rejectedRows": 0,
+      "alertCount": 6,
+      "suppressedCount": 0
+    },
+    {
+      "round": 3,
+      "strategy": "approved-load",
+      "status": "completed",
+      "elapsedMs": 0.6687000000000012,
+      "datasetId": "4e48dbecaf992777",
+      "ruleVersion": "P2-R2",
+      "validRows": 94,
+      "rejectedRows": 0,
+      "alertCount": 4,
+      "suppressedCount": 2
+    }
+  ],
+  "scored": {
+    "baseline": {
+      "development": {
+        "unit": "session",
+        "rows": [
+          {
+            "session": "dev-normal",
+            "actual": "normal",
+            "predicted": "normal",
+            "alertRules": []
+          },
+          {
+            "session": "dev-login",
+            "actual": "anomaly",
+            "predicted": "anomaly",
+            "alertRules": [
+              "login_failure"
+            ]
+          },
+          {
+            "session": "dev-scan",
+            "actual": "anomaly",
+            "predicted": "anomaly",
+            "alertRules": [
+              "error_burst"
+            ]
+          },
+          {
+            "session": "dev-load",
+            "actual": "normal",
+            "predicted": "anomaly",
+            "alertRules": [
+              "request_burst"
+            ]
+          }
+        ],
+        "TP": 2,
+        "FP": 1,
+        "FN": 0,
+        "TN": 1,
+        "precision": 0.6666666666666666,
+        "recall": 1,
+        "fpr": 0.5,
+        "reviewSessions": 3
+      },
+      "test": {
+        "unit": "session",
+        "rows": [
+          {
+            "session": "test-normal",
+            "actual": "normal",
+            "predicted": "normal",
+            "alertRules": []
+          },
+          {
+            "session": "test-login",
+            "actual": "anomaly",
+            "predicted": "anomaly",
+            "alertRules": [
+              "login_failure"
+            ]
+          },
+          {
+            "session": "test-scan",
+            "actual": "anomaly",
+            "predicted": "anomaly",
+            "alertRules": [
+              "error_burst"
+            ]
+          },
+          {
+            "session": "test-load",
+            "actual": "normal",
+            "predicted": "anomaly",
+            "alertRules": [
+              "request_burst"
+            ]
+          }
+        ],
+        "TP": 2,
+        "FP": 1,
+        "FN": 0,
+        "TN": 1,
+        "precision": 0.6666666666666666,
+        "recall": 1,
+        "fpr": 0.5,
+        "reviewSessions": 3
+      }
+    },
+    "approved-load": {
+      "development": {
+        "unit": "session",
+        "rows": [
+          {
+            "session": "dev-normal",
+            "actual": "normal",
+            "predicted": "normal",
+            "alertRules": []
+          },
+          {
+            "session": "dev-login",
+            "actual": "anomaly",
+            "predicted": "anomaly",
+            "alertRules": [
+              "login_failure"
+            ]
+          },
+          {
+            "session": "dev-scan",
+            "actual": "anomaly",
+            "predicted": "anomaly",
+            "alertRules": [
+              "error_burst"
+            ]
+          },
+          {
+            "session": "dev-load",
+            "actual": "normal",
+            "predicted": "normal",
+            "alertRules": []
+          }
+        ],
+        "TP": 2,
+        "FP": 0,
+        "FN": 0,
+        "TN": 2,
+        "precision": 1,
+        "recall": 1,
+        "fpr": 0,
+        "reviewSessions": 2
+      },
+      "test": {
+        "unit": "session",
+        "rows": [
+          {
+            "session": "test-normal",
+            "actual": "normal",
+            "predicted": "normal",
+            "alertRules": []
+          },
+          {
+            "session": "test-login",
+            "actual": "anomaly",
+            "predicted": "anomaly",
+            "alertRules": [
+              "login_failure"
+            ]
+          },
+          {
+            "session": "test-scan",
+            "actual": "anomaly",
+            "predicted": "anomaly",
+            "alertRules": [
+              "error_burst"
+            ]
+          },
+          {
+            "session": "test-load",
+            "actual": "normal",
+            "predicted": "normal",
+            "alertRules": []
+          }
+        ],
+        "TP": 2,
+        "FP": 0,
+        "FN": 0,
+        "TN": 2,
+        "precision": 1,
+        "recall": 1,
+        "fpr": 0,
+        "reviewSessions": 2
+      }
+    }
+  },
+  "trace": {
+    "baseline": true,
+    "approved-load": true
+  },
+  "decision": "候选在此合成测试分区值得继续验证",
+  "limits": [
+    "每个分区只有四个构造会话，指标不代表真实流量准确率",
+    "计时仅包含同步分析，人工复核和开发耗时未测",
+    "AI 运行调用为 0；历史 AI 开发成本未知",
+    "批准清单来自外部构造情境，不由日志内容推断"
+  ]
+}

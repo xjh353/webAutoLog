@@ -97,10 +97,11 @@ tests/            回归测试
 scripts/          合成数据的会话级评价脚本
 fixtures/         固定合成情境、外部批准清单和实验约定
 docs/             契约、评价、交付和结对复核材料
+evidence/         已固化的一次真实运行逐次记录、执行状态与成本表
 data/             运行时生成的本地报告（不纳入 Git）
 ```
 
-第一次演示可按 [启动与演示指南](docs/启动与演示指南.md) 操作；目录职责与关键文件见 [项目结构设计与文件职责讲解](docs/项目结构设计与文件职责讲解.md)。课程要求与具体口径见 [项目设计](docs/project.md) 和 [课件对照](docs/课程要求对照.md)；规则阈值见 [规则卡](docs/rules.md)；接口与报告字段见 [API 说明](docs/api.md)；双版本实测和成本边界见 [工程实验](docs/experiment.md) 与 [评价记录](docs/evaluation.md)；部署恢复见 [交付说明](docs/release.md)；结对互评可使用 [复核模板](docs/peer-review.md)。
+第一次演示可按 [启动与演示指南](docs/启动与演示指南.md) 操作；目录职责与关键文件见 [项目结构设计与文件职责讲解](docs/项目结构设计与文件职责讲解.md)。课程要求与具体口径见 [项目设计](docs/project.md) 和 [课件对照](docs/课程要求对照.md)；规则阈值见 [规则卡](docs/rules.md)；接口与报告字段见 [API 说明](docs/api.md)；双版本实测和成本边界见 [工程实验](docs/experiment.md) 与 [评价记录](docs/evaluation.md)；一次真实运行的逐次原始结果、Git 提交号与执行状态见 [运行证据](evidence/README.md)，结构化成本表见 [成本记录](evidence/cost.md)；部署恢复见 [交付说明](docs/release.md)；结对互评可使用 [复核模板](docs/peer-review.md)。
 
 报告仅保存在本机 `data/`，程序不向外部服务发送日志。真实日志和导出文件可能含敏感路径或会话标识，分享前应按团队要求处理。
 

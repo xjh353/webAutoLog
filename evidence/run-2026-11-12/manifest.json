@@ -1,0 +1,85 @@
+{
+  "recordType": "一次真实运行的原始结果固化 + 事后补记的定位信息",
+  "runId": "1794484267202-57b7e25e-406a-459d-b251-7fce5058dfd8",
+  "executionStatus": "本人运行",
+  "executorNote": "命令由项目组会话在本机终端实际执行，AI 助手负责调用终端与整理材料；不是引用既有报告，也不是教学示意，更不是伙伴复现结果。",
+  "recordedAt": "2026-11-12T20:04:33+08:00",
+  "run": {
+    "createdAt": "2026-11-12T11:51:07.201Z",
+    "createdAtLocal": "2026-11-12 19:51:07 UTC+8",
+    "gitCommit": "91ecf2b58facc35b4cc57d7b1f26852ba721d94e",
+    "gitCommitShort": "91ecf2b",
+    "gitBranch": "main",
+    "gitCommitNote": "这是运行发生时的 HEAD，用于复原当时的规则代码；本证据目录自身的提交号与之不同，不要用后者定位本次文档提交",
+    "workingTreeCleanAtRun": true,
+    "environment": {
+      "node": "v22.22.2",
+      "platform": "win32",
+      "arch": "x64"
+    },
+    "commands": [
+      "npm test",
+      "npm run eval",
+      "npm run experiment"
+    ],
+    "commandOutcomes": {
+      "npm test": "退出码 0；14 个测试全部通过",
+      "npm run eval": "退出码 0；终端输出与 docs/evaluation.md 的汇总表一致",
+      "npm run experiment": "退出码 0；生成 input.jsonl、baseline.json、candidate.json、result.json 四个文件"
+    },
+    "sourceRunDirectory": "data/experiments/1794484267202-57b7e25e-406a-459d-b251-7fce5058dfd8/"
+  },
+  "rawFiles": [
+    {
+      "path": "result.json",
+      "sha256": "90b3a9aa8e02386b7461219399e3a5888b055d16fa8f861804bf9e4bb572786f",
+      "bytes": 8520,
+      "note": "逐次运行记录、计分、源文件哈希与边界说明；从 data/ 原样复制，未改动任何数值"
+    }
+  ],
+  "withheldFromRepository": [
+    {
+      "path": "data/experiments/1794484267202-57b7e25e-406a-459d-b251-7fce5058dfd8/input.jsonl",
+      "sha256": "4e48dbecaf992777060c078a22cdab85349bcd3c6f6129032c1f98765ecf26d0",
+      "bytes": 15166,
+      "reason": "合成输入，94 条记录、8 个完整会话，可由 fixtures/experiment-cases.json 经同一入口确定性重生成；fixtures 已在仓库内。末行无换行符，wc -l 显示 93"
+    },
+    {
+      "path": "data/experiments/1794484267202-57b7e25e-406a-459d-b251-7fce5058dfd8/baseline.json",
+      "sha256": "6232acd0f1605802af534e0e3a634b57a864ee3726236476eeff6f316b6108e8",
+      "bytes": 68500,
+      "reason": "AGENTS.md 第 4、23 条不把 data/ 中的运行报告提交到仓库；P2-R1 完整报告含 alerts 与 events，可由 npm run experiment 重生成并用本哈希核对"
+    },
+    {
+      "path": "data/experiments/1794484267202-57b7e25e-406a-459d-b251-7fce5058dfd8/candidate.json",
+      "sha256": "5175f1d600a3334a65646d8b1bd85e26119e91e304f8a9229e88f7c322c8c8ea",
+      "bytes": 67785,
+      "reason": "同上；P2-R2 完整报告含 alerts、suppressed 与 events"
+    }
+  ],
+  "rawFilesAreByteIdenticalToSource": true,
+  "verificationCommand": "sha256sum evidence/run-2026-11-12/result.json",
+  "plan": {
+    "source": "fixtures/experiment-plan.json",
+    "sha256": "dc3b9292b2d5a6aa4ee2bad500f1ba9eddd20ca5208cebe53fb52075efeb420f",
+    "writtenBeforeResults": true,
+    "note": "该约定文件在本次运行之前已存在于 Git 历史中；本次未修改约定、未更换指标"
+  },
+  "addedFieldsInThisManifest": [
+    "Git 提交号与分支（result.json 只有源文件哈希）",
+    "执行状态与执行者说明（result.json 只有 status: executed）",
+    "运行命令、退出结果、本机时间与补记时间",
+    "原始文件字节数与 sha256 校验清单"
+  ],
+  "notModified": "result.json 中的任何数值、状态、耗时、计分结果均未改动；data/ 中的三个原始文件也未被修改或删除。本次没有重跑覆盖，没有删去任何一轮，也没有挑选最快的一次作为结果",
+  "notRecorded": [
+    "命令级墙钟时间（未计时）",
+    "人工复核待复核会话的时间",
+    "批准清单准备与维护的人工投入",
+    "开发阶段 AI 调用次数与费用",
+    "内存占用",
+    "后续改动成本（未发生）"
+  ],
+  "costRecord": "../cost.md",
+  "index": "../README.md"
+}
