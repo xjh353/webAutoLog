@@ -13,7 +13,7 @@
 
 本项目组已运行一次（执行状态：**本人运行**）。这次运行的原始逐次记录、Git 提交号、命令与环境固定在 [`evidence/run-2026-11-12/`](../evidence/run-2026-11-12/manifest.json)，索引与证据链抽查见 [`evidence/README.md`](../evidence/README.md)，测试分区结果与逐次耗时表见[评价记录](evaluation.md)。运行号 `1794484267202-57b7e25e-406a-459d-b251-7fce5058dfd8`，提交 `91ecf2b`，时间 2026-11-12 19:51 UTC+8，Node v22.22.2 / win32 / x64。
 
-`data/` 中的三个其余产物（`input.jsonl`、`baseline.json`、`candidate.json`）按 `AGENTS.md` 第 4、23 条不入库，其 sha256 与重生成方式登记在 `manifest.json` 的 `withheldFromRepository` 中。伙伴的新运行结果应保存在伙伴自己的新目录；本文件和项目组结果不能代替伙伴执行。若无法运行，写明所用版本、失败命令、错误和未检查范围。
+`data/` 中的三个其余产物（`input.jsonl`、`baseline.json`、`candidate.json`）按 `AGENTS.md` 第 4、23 条不入库，其 sha256 与重生成方式登记在 `manifest.json` 的 `withheldFromRepository` 中。伙伴的新运行结果应保存在伙伴自己的新目录；本文件和项目组结果不能代替伙伴执行。若无法运行，写明所用版本、失败命令、错误和未检查范围。交接包四件、20 分钟安排与[伙伴三句话](peer-review.md)见[结对复核模板](peer-review.md)；三句话与签署栏必须由伙伴本人填写，AI 与原组只整理材料。
 
 ## 成本与选择
 
