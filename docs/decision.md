@@ -17,7 +17,7 @@
 
 ## 01 条件（在运行前写死，未因结果更改）
 
-比较约定保存在 [`fixtures/experiment-plan.json`](../fixtures/experiment-plan.json)，sha256 `dc3b9292b2d5a6aa4ee2bad500f1ba9eddd20ca5208cebe53fb52075efeb420f`；该文件在本次运行之前已存在于 Git 历史中，本次没有修改约定、没有更换指标。
+比较约定保存在 [`fixtures/experiment-plan.json`](../fixtures/experiment-plan.json)，本次运行时的 sha256 为 `dc3b9292b2d5a6aa4ee2bad500f1ba9eddd20ca5208cebe53fb52075efeb420f`；该文件在运行之前已存在于 Git 历史中，运行中没有修改约定、没有更换指标。2026-11-14 按课件补齐了停止安排（`stoppingRule`）、失败保存策略（`failurePolicy`）、执行状态标签（`executionStatus`）、不换尺子声明（`rulerFreeze`）与完成标准（`completionStandard`）五个**文档性字段**，文件哈希变为 `3cbf0fcf…`；九个影响结果的字段逐字段核对未改动，新增字段不追溯适用于本次结果，详见[运行证据的 `planRevisionAfterRun`](../evidence/run-2026-11-12/manifest.json)（`appliesToThisRun: false`）。旧版约定可从提交 `91ecf2b` 检出。
 
 | 五句约定 | 本轮落点 |
 | --- | --- |

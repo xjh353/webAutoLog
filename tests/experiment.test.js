@@ -44,3 +44,19 @@ test('approval for one service does not suppress the same session in another ser
   assert.equal(report.alerts.filter(item => item.ruleId === 'request_burst').length, 1);
   assert.equal(report.alerts.find(item => item.ruleId === 'request_burst').eventIds[0], 'other-0');
 });
+
+test('plan freezes the comparison rules and records stopping, failure and status policy', () => {
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const plan = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'fixtures', 'experiment-plan.json'), 'utf8'));
+  assert.equal(plan.primaryMetric, '测试分区的正常会话中，产生候选告警的会话数（FP）');
+  assert.equal(plan.qualityGate, '测试分区的目标异常会话均需产生候选告警，且告警 event_id 能回查原始事件');
+  assert.equal(plan.repetitions, 3);
+  assert.equal(plan.timingBoundary, '仅 analyze() 的同步处理时间；不含生成输入、读写结果或人工复核');
+  assert.deepEqual(plan.fixed, ['同一批合成会话', '相同解析器、60 秒窗口和其他阈值', '按完整会话统计', '相同运行入口和计时边界']);
+  assert.ok(plan.stoppingRule);
+  assert.ok(plan.failurePolicy);
+  assert.deepEqual(plan.executionStatus.allowedLabels, ['本人运行', '读取已有结果', '仅计划·教学示意']);
+  assert.ok(plan.rulerFreeze);
+  assert.ok(plan.completionStandard);
+});

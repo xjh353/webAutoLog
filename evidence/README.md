@@ -43,6 +43,12 @@ evidence/
 
 伙伴可用下方命令在自己的 `data/` 里重生成，并用 `manifest.json` 里的完整哈希核对是否得到同一份输入与报告。**这三份文件不入库不是删证据**，而是遵守项目自己先写下的约定。
 
+### 约定文件在本次运行之后补过字段
+
+`fixtures/experiment-plan.json` 于 2026-11-14 按课件补齐了五个文档性字段（`stoppingRule`、`failurePolicy`、`executionStatus`、`rulerFreeze`、`completionStandard`），sha256 由 `dc3b9292…` 变为 `3cbf0fcf…`。**`result.json` 内嵌的是运行当时的约定快照与旧哈希**，这是历史事实，保持原样不动；因此用当前文件去算哈希会与 `result.json` 不一致，这不代表结果被改过。
+
+`manifest.json` 的 `planRevisionAfterRun` 记录了新旧哈希与 `appliesToThisRun: false`：九个影响结果的字段（问题、两版定义、共同条件、主指标、质量门槛、轮次、计时边界、判断规则）逐字段核对未改动，新增字段不追溯适用于本次结果。旧版约定可从提交 `91ecf2b` 检出。本次没有重跑、没有改写任何结果，也没有更换尺子。
+
 ## 逐次结果：预先约定的 3 轮 × 2 版全部摆出
 
 表格数值来自 `result.json` 的 `runs[]`，展示时保留 4 位小数，完整精度以原始文件为准。
