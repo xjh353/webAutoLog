@@ -92,7 +92,7 @@ evidence/
 
 ```bash
 sha256sum evidence/run-2026-11-12/result.json
-npm test              # 14 个测试全部通过
+npm test              # 当前 15 个测试全部通过（2026-11-12 那次运行为 14 项）
 npm run eval          # 终端输出与 docs/evaluation.md 一致
 npm run experiment    # 在 data/experiments/<新运行号>/ 生成四个文件
 ```
